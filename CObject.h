@@ -3,7 +3,7 @@
 
 class CObject
 {
-CVect colour;
+CVect colour,blesk;
 
 public:
     /*CObject(){CVect c; colour=c;}
@@ -11,7 +11,9 @@ public:
     CObject(const CObject &b){colour.SetZero(); colour=b.colour;}
     CObject(const CVect &b){colour.SetZero(); colour=b;}*/
     void paintit(CVect&b){colour=b;}
+    void glyanetz(CVect&b){blesk=b;}
     CVect colour1()const{return colour;}
+    CVect blesk1()const{return blesk;}
     virtual CVect centr1()const=0;
     virtual bool intersect(const CVect& orig, const CVect& dir,float &dist, bool &out,float a0, float a1, const CVect& norm)const=0;
     friend CVect ray(const CVect& orig, const CVect& dir,vector<CObject*> &objs, float a0, float a1, const CVect& norm);
@@ -44,10 +46,6 @@ class CSphere : public CObject
 };
 
 
-void painter8000(const CVect& cam,const CVect& nor, const CVect& ron,const float a0,const float a1 ,const double alpha,  int width, int height, vector<CObject*> &objs );
-CVect ray(const CVect& orig, const CVect& dir,vector<CObject*> &objs, float a0,float a1, const CVect& norm);
-bool full_intersect(const CVect& orig, const CVect& dir, float a0, float a1, const CVect& norm, vector<CObject*> &objs, CVect& pnt, CVect& N, CVect& color);
-void gradient(const CVect& orig, const CVect& nor,const float a0, const float a1,CObject* obj);
 
 
 

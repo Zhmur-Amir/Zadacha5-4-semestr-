@@ -1,6 +1,11 @@
 #pragma once
-#include "CObject.h"
+#include "Light.h"
 
+
+CVect reflect(const CVect &a, const CVect &b)
+{
+    return (a-(b*2*(a*b)));
+}
 
 void gradient(const CVect& orig, const CVect& nor,const float a0, const float a1,CObject* obj)
 {
@@ -13,12 +18,12 @@ void gradient(const CVect& orig, const CVect& nor,const float a0, const float a1
      f=abs(van*norm);
      if(f<w)
      {
-         CVect c(0,2*f*w,0);
+         CVect c(0,f*2/w,255-f*2/w);
          obj->paintit(c);
      }
      else
      {
-         CVect c(0,0,2*f*w);
+         CVect c(0,255-f*2/w,f*2/w);
          obj->paintit(c);
      }
 
@@ -26,7 +31,7 @@ void gradient(const CVect& orig, const CVect& nor,const float a0, const float a1
 }
 
 
-bool full_intersect(const CVect& orig, const CVect& dir, float a0, float a1, const CVect& norm, vector<CObject*> &objs, CVect& pnt, CVect& N, CVect& color)
+bool full_intersect(const CVect& orig, const CVect& dir, float a0, float a1, const CVect& norm, vector<CObject*> &objs, CVect& pnt, CVect& N, CVect& color, CVect& bles)
 {
     float min_dist=10*a1;
     for( vector<CObject*>::iterator it=objs.begin(); it!=objs.end(); ++it)
@@ -41,6 +46,7 @@ bool full_intersect(const CVect& orig, const CVect& dir, float a0, float a1, con
                 N=(pnt-((*it)->centr1()));
                 N=N.norm();
                 color=((*it)->colour1());
+                bles=((*it)->blesk1());
             }
             else
             {
@@ -52,6 +58,7 @@ bool full_intersect(const CVect& orig, const CVect& dir, float a0, float a1, con
                     N=N.norm();
                     CVect grey(128,128,128);
                     color=grey;
+                    bles=((*it)->blesk1());
                 }
 
             }
@@ -63,12 +70,12 @@ bool full_intersect(const CVect& orig, const CVect& dir, float a0, float a1, con
 
 
 
-CVect ray(const CVect& orig, const CVect& dir, vector<CObject*> &objs ,float a0, float a1, const CVect& norm)
+CVect ray(const CVect& orig, const CVect& dir, vector<CObject*> &objs ,float a0, float a1, const CVect& norm, vector<Light>&lights)
 {
     bool inter;
     float dist;
-    CVect pnt,N,color;
-    inter=full_intersect(orig,dir,a0,a1,norm,objs,pnt,N,color);
+    CVect pnt,N,color,bles,s(1,1,1);
+    inter=full_intersect(orig,dir,a0,a1,norm,objs,pnt,N,color,bles);
     if(inter==false)
     {
         CVect v(0,0,0);
@@ -76,7 +83,27 @@ CVect ray(const CVect& orig, const CVect& dir, vector<CObject*> &objs ,float a0,
     }
     else
     {
-        return color;
+        float lght=0,zerk=0;
+        for(vector<Light>::iterator it=lights.begin(); it!=lights.end(); ++it)
+        {
+            CVect lg_dir;
+            lg_dir=((*it).cord1())-pnt;
+            lg_dir=lg_dir.norm();
+
+            float lg_dist;
+            lg_dist=(((*it).cord1())-pnt).len();
+            CVect shad_orig, shad_pt, shad_N,shad_color,shad_bles;
+            shad_orig=(lg_dir*N<0 ? pnt-N*1e-3 : pnt+ N*1e-3);
+            if(full_intersect(shad_orig,lg_dir,a0,a1,norm,objs,shad_pt,shad_N,shad_color,shad_bles) && (shad_pt-shad_orig).len()<lg_dist)
+            {
+                continue;
+            }
+
+            lght+=((*it).power1())*std::max(0.f,lg_dir*N);
+            zerk+=powf(std::max(0.f,reflect(lg_dir,N)*dir),bles[2])*((*it).power1());
+
+        }
+        return (color*lght*bles[0]*0.25+s*zerk*bles[1]*100);
     }
     /*if(inter==true && out==false)
         {
@@ -104,7 +131,7 @@ CVect ray(const CVect& orig, const CVect& dir, vector<CObject*> &objs ,float a0,
 
 
 
-void painter8000(const CVect& cam,const CVect& nor, const CVect& ron,const float a0,const float a1 ,const double alpha,  int width, int height, vector<CObject*> &objs)
+void painter8000(const CVect& cam,const CVect& nor, const CVect& ron,const float a0,const float a1 ,const double alpha,  int width, int height, vector<CObject*> &objs,vector<Light>&lights)
 {
     cimg_library::CImg<int>img(width,height,1,3);
    float pixel,n1,n2,n3;
@@ -134,7 +161,7 @@ void painter8000(const CVect& cam,const CVect& nor, const CVect& ron,const float
 
                     CVect orig(cam),dir(x,y,z),res;
                     dir=dir.norm();
-                    res=ray(orig,dir,objs,a0,a1,norm);
+                    res=ray(orig,dir,objs,a0,a1,norm,lights);
                     img(i,j,0)=res[0];
                     img(i,j,1)=res[1];
                     img(i,j,2)=res[2];
@@ -142,10 +169,9 @@ void painter8000(const CVect& cam,const CVect& nor, const CVect& ron,const float
             }
         }
 
-
+    img.normalize(0,255);
     img.display();
-
-
+    img.save_bmp("output.bmp");
 
 
 
