@@ -76,7 +76,7 @@ void CVect :: CopyOnly(const float a,const float b,const float c)
     }
 }
 
-CVect CVect :: operator*(const float b)
+CVect CVect :: operator*(const float b)const
 {
     float* crr=new float[3];
     for(int i=0; i<3;i++)
@@ -86,7 +86,7 @@ CVect CVect :: operator*(const float b)
     CVect c(crr);
     return c ;
 }
-CVect CVect :: norm()
+CVect CVect :: norm()const
 {
    float b;
    b=len();

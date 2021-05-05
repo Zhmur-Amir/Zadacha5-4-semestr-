@@ -2,59 +2,83 @@
 #include "CObject.h"
 
 
-void gradient(int width, int height)
+void gradient(const CVect& orig, const CVect& nor,const float a0, const float a1,CObject* obj)
 {
-     cimg_library::CImg<int>img(width,height,1,3);
-     for (int j=0; j<height;j++)
+     float w,f;
+     CVect cen,norm,van;
+     norm=nor.norm();
+     w=(a1-a0)/2;
+     cen=(obj->centr1());
+     van=orig-cen;
+     f=abs(van*norm);
+     if(f<w)
      {
-         for(int i=0; i<width; i++)
-         {
-             img(i,j,0)=i%width;
-             img(i,j,1)=j%height;
-             img(i,j,2)=1;
-         }
+         CVect c(0,2*f*w,0);
+         obj->paintit(c);
+     }
+     else
+     {
+         CVect c(0,0,2*f*w);
+         obj->paintit(c);
      }
 
-
-
-    img.display();
 
 }
 
 
-CVect ray(const CVect& orig, const CVect& dir, CObject* obj,float a0, float a1, const CVect& norm)
+bool full_intersect(const CVect& orig, const CVect& dir, float a0, float a1, const CVect& norm, vector<CObject*> &objs, CVect& pnt, CVect& N, CVect& color)
 {
-    bool inter, out;
-    float dist;
-    inter=obj->intersect(orig,dir,dist,out,a0,a1,norm);
+    float min_dist=10*a1;
+    for( vector<CObject*>::iterator it=objs.begin(); it!=objs.end(); ++it)
+        {
+            float dist;
+            bool out,res;
+            res=((*it)->intersect(orig, dir,dist,out,a0,a1,norm));
+            if(res==true && dist<min_dist && out==true)
+            {
+                min_dist=dist;
+                pnt=orig+dir*dist;
+                N=(pnt-((*it)->centr1()));
+                N=N.norm();
+                color=((*it)->colour1());
+            }
+            else
+            {
+                if(res==true && dist<min_dist && out==false)
+                {
+                    min_dist=dist;
+                    pnt=orig+dir*dist;
+                    N=(pnt-((*it)->centr1()))*(-1);
+                    N=N.norm();
+                    CVect grey(128,128,128);
+                    color=grey;
+                }
 
-    /*if(inter==true && (dist<a0 || dist>a1))
+            }
+        }
+
+        return min_dist<a1;
+
+}
+
+
+
+CVect ray(const CVect& orig, const CVect& dir, vector<CObject*> &objs ,float a0, float a1, const CVect& norm)
+{
+    bool inter;
+    float dist;
+    CVect pnt,N,color;
+    inter=full_intersect(orig,dir,a0,a1,norm,objs,pnt,N,color);
+    if(inter==false)
     {
-        CVect v(128,128,250);
+        CVect v(0,0,0);
         return v;
     }
     else
     {
-        if(inter==true && out==false)
-        {
-            CVect v(128,128,128);
-                return v;
-        }
-        else
-        {
-            if(inter==true)
-            {
-                CVect v(250,0,0);
-                return v;
-            }
-            else
-            {
-                CVect v(0,0,0);
-                return v;
-            }
-        }
-    }*/
-    if(inter==true && out==false)
+        return color;
+    }
+    /*if(inter==true && out==false)
         {
             CVect v(128,128,128);
             return v;
@@ -74,13 +98,13 @@ CVect ray(const CVect& orig, const CVect& dir, CObject* obj,float a0, float a1, 
                     return v;
                 }
             }
-        }
+        }*/
 
 }
 
 
 
-void painter8000(const CVect& cam,const CVect& nor, const CVect& ron,const float a0,const float a1 ,const double alpha,  int width, int height, CObject* obj)
+void painter8000(const CVect& cam,const CVect& nor, const CVect& ron,const float a0,const float a1 ,const double alpha,  int width, int height, vector<CObject*> &objs)
 {
     cimg_library::CImg<int>img(width,height,1,3);
    float pixel,n1,n2,n3;
@@ -110,7 +134,7 @@ void painter8000(const CVect& cam,const CVect& nor, const CVect& ron,const float
 
                     CVect orig(cam),dir(x,y,z),res;
                     dir=dir.norm();
-                    res=ray(orig,dir, obj,a0,a1,norm);
+                    res=ray(orig,dir,objs,a0,a1,norm);
                     img(i,j,0)=res[0];
                     img(i,j,1)=res[1];
                     img(i,j,2)=res[2];

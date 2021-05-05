@@ -3,13 +3,15 @@
 
 bool CSphere :: intersect(const CVect& orig, const CVect& dir, float &dist, bool &out,float a0, float a1, const CVect& norm)const
 {
-    CVect OC,r(0,0,1),m(0,0,0.9);
+    CVect OC;
     OC=orig-centr;
-    float proj,cosa;
+    float proj,cosa,proj1;
     proj=OC*dir;
     cosa=norm*dir;
     float CP;
-    CP=OC*OC-proj*proj;
+    CP=OC*OC;
+    proj1=proj*proj;
+    CP=CP-proj1;
     if(CP>rad*rad)
     {
         return false;

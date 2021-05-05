@@ -23,8 +23,8 @@ public:
     float operator*(const CVect&b)const;
     void CopyOnly(const float a,const float b,const float c);
     CVect(const float a,const float b,const float c){SetZero(); CopyOnly(a,b,c);};
-    CVect operator*(const float b);
-    CVect norm();
+    CVect operator*(const float b)const;
+    CVect norm()const;
     float len()const{return sqrtf(arr[0]*arr[0]+arr[1]*arr[1]+arr[2]*arr[2]);}
     void print()const;
 
@@ -32,4 +32,4 @@ public:
 
 ostream &operator<<(ostream &cout,  CVect &s);
 ostream &operator<<(ostream &cout, const CVect &s);
-CVect ray(const CVect& orig, const CVect& dir,float a0,float a1, const CVect& norm);
+
