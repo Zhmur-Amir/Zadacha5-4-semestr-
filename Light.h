@@ -26,3 +26,4 @@ CVect reflect(const CVect &a, const CVect &b);
 vector<CObject*> obj_reader(const CVect& cam, const CVect& nor,const float a0, const float a1,const string FileName);
 vector<Light> scene_reader(CVect& cam,CVect& nor, CVect& ron,float& a0,float& a1 ,double& alpha,  int &width, int &height,const string FileName);
 vector<CObject*> Create_obj(const string str);
+void autotest(void);

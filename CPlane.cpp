@@ -9,7 +9,10 @@ bool CPlane :: intersect(const CVect& orig, const CVect& dir,float &dist, bool &
     float vect,t,z0,x0,y0,x,y,z;
     vect=v*dir;
     constexpr int ulp=1;
-    constexpr float eps=1.e-10;
+
+    constexpr float eps=3.5;
+
+
     if(std::fabs(vect)<=eps)
     {
         false;
@@ -24,7 +27,10 @@ bool CPlane :: intersect(const CVect& orig, const CVect& dir,float &dist, bool &
     z0=orig[2]-t*dir[2];
     CVect w(x0,y0,z0);
     dist=w.len();
-
+    if (w*norm<a0 ||w*norm>a1)
+    {
+        return false;
+    }
 
     //b = orig; d = dir;
     //p[i]=crr[i];
@@ -34,25 +40,26 @@ bool CPlane :: intersect(const CVect& orig, const CVect& dir,float &dist, bool &
     // (p0-b) = (-d.y  (p0-p1).y  (p0-p2).y) * (u)
     //          (-d.z  (p0-p1).z  (p0-p2).z)   (v)
     // (crr[0]-orig)[2]
-    float u,b,det,dett,detu,detv;
-
-     ///
-     det = (-1)*dir[0]*(crr[0]-crr[1])[1]*(crr[0]-crr[2])[2]+(crr[0]-crr[1])[0]*(crr[0]-crr[2])[1]*(-1)*dir[2]+(crr[0]-crr[2])[0]*(-1)*dir[1]*(crr[0]-crr[1])[2]
-    -(crr[0]-crr[2])[0]*(crr[0]-crr[1])[1]*(-1)*dir[2]-(crr[0]-crr[1])[0]*(-1)*dir[1]*(crr[0]-crr[2])[2]-(-1)*dir[0]*(crr[0]-crr[2])[1]*(crr[0]-crr[1])[2];
-    ///
+    //float u,b,det,dett,detu,detv;
 
 
-
-    dett = (crr[0]-orig)[0]*(crr[0]-crr[1])[1]*(crr[0]-crr[2])[2]+(crr[0]-crr[1])[0]*(crr[0]-crr[2])[1]*(crr[0]-orig)[1] +(crr[0]-crr[2])[0]*(crr[0]-orig)[1] *(crr[0]-crr[1])[2]-(crr[0]-crr[2])[0]*(crr[0]-crr[1])[1]*(crr[0]-orig)[1] -(crr[0]-crr[1])[0]*(crr[0]-orig)[1] *(crr[0]-crr[2])[2]-(crr[0]-orig)[0]*(crr[0]-crr[2])[1]*(crr[0]-crr[1])[2];
-    detu = (-1)*dir[0]*(crr[0]-orig)[1] *(crr[0]-crr[2])[2]+(crr[0]-orig)[0]*(crr[0]-crr[2])[1]*(-1)*dir[2]+(crr[0]-crr[2])[0]*(-1)*dir[1]*(crr[0]-orig)[1] -(crr[0]-crr[2])[0]*(crr[0]-orig)[1] *(-1)*dir[2]-(crr[0]-orig)[0]*(-1)*dir[1]*(crr[0]-crr[2])[2]-(-1)*dir[0]*(crr[0]-crr[2])[1]*(crr[0]-orig)[2];
-    detv = (-1)*dir[0]*(crr[0]-crr[1])[1]*(crr[0]-orig)[1] +(crr[0]-crr[1])[0]*(crr[0]-orig)[1] *(-1)*dir[2]+(crr[0]-orig)[0]*(-1)*dir[1]*(crr[0]-crr[1])[2]-(crr[0]-orig)[0]*(crr[0]-crr[1])[1]*(-1)*dir[2]-(crr[0]-crr[1])[0]*(-1)*dir[1]*(crr[0]-orig)[1] -(-1)*dir[0]*(crr[0]-orig)[1] *(crr[0]-crr[1])[2];
+     //det = (-1)*dir[0]*(crr[0]-crr[1])[1]*(crr[0]-crr[2])[2]+(crr[0]-crr[1])[0]*(crr[0]-crr[2])[1]*(-1)*dir[2]+(crr[0]-crr[2])[0]*(-1)*dir[1]*(crr[0]-crr[1])[2]
+   // -(crr[0]-crr[2])[0]*(crr[0]-crr[1])[1]*(-1)*dir[2]-(crr[0]-crr[1])[0]*(-1)*dir[1]*(crr[0]-crr[2])[2]-(-1)*dir[0]*(crr[0]-crr[2])[1]*(crr[0]-crr[1])[2];
 
 
 
-    //x=((crr[0]-w)^(crr[1]-w)).len()+((crr[1]-w)^(crr[2]-w)).len()+((crr[2]-w)^(crr[0]-w)).len();
-    //y=((crr[0]-crr[2])^(crr[0]-crr[1])).len();
+
+    //dett = (crr[0]-orig)[0]*(crr[0]-crr[1])[1]*(crr[0]-crr[2])[2]+(crr[0]-crr[1])[0]*(crr[0]-crr[2])[1]*(crr[0]-orig)[1] +(crr[0]-crr[2])[0]*(crr[0]-orig)[1] *(crr[0]-crr[1])[2]-(crr[0]-crr[2])[0]*(crr[0]-crr[1])[1]*(crr[0]-orig)[1] -(crr[0]-crr[1])[0]*(crr[0]-orig)[1] *(crr[0]-crr[2])[2]-(crr[0]-orig)[0]*(crr[0]-crr[2])[1]*(crr[0]-crr[1])[2];
+    //detu = (-1)*dir[0]*(crr[0]-orig)[1] *(crr[0]-crr[2])[2]+(crr[0]-orig)[0]*(crr[0]-crr[2])[1]*(-1)*dir[2]+(crr[0]-crr[2])[0]*(-1)*dir[1]*(crr[0]-orig)[1] -(crr[0]-crr[2])[0]*(crr[0]-orig)[1] *(-1)*dir[2]-(crr[0]-orig)[0]*(-1)*dir[1]*(crr[0]-crr[2])[2]-(-1)*dir[0]*(crr[0]-crr[2])[1]*(crr[0]-orig)[2];
+   // detv = (-1)*dir[0]*(crr[0]-crr[1])[1]*(crr[0]-orig)[1] +(crr[0]-crr[1])[0]*(crr[0]-orig)[1] *(-1)*dir[2]+(crr[0]-orig)[0]*(-1)*dir[1]*(crr[0]-crr[1])[2]-(crr[0]-orig)[0]*(crr[0]-crr[1])[1]*(-1)*dir[2]-(crr[0]-crr[1])[0]*(-1)*dir[1]*(crr[0]-orig)[1] -(-1)*dir[0]*(crr[0]-orig)[1] *(crr[0]-crr[1])[2];
+
+
+
+    x=((crr[0]-w)^(crr[1]-w)).len()+((crr[1]-w)^(crr[2]-w)).len()+((crr[2]-w)^(crr[0]-w)).len();
+    y=((crr[0]-crr[2])^(crr[0]-crr[1])).len();
+
 //cout<<det<<endl;
-if(std::fabs(det)<=1.e-3)
+/*if(std::fabs(det)<=1.e-3)
     {
         //cout<<"1"<<endl;
         return false;
@@ -65,29 +72,23 @@ if(std::fabs(det)<=1.e-3)
     if(b*det < 0.0 || fabs(u+b-det)<=std::numeric_limits<float>::epsilon()*std::fabs(u+b+det)*ulp){
         //cout<<"2"<<endl;
         return false;
-    }
+    }*/
     //*t = dett/det;
-    out=true;
-    return true;
+    //out=true;
+   // return true;
 //cout<<"3"<<endl;
 
 
 
-
-
-
-
-
-
-///
-    /*if (fabs(x-y)<=std::numeric_limits<double>::epsilon()*std::fabs(x+y)*ulp )
+    if (fabs(x-y)<=std::numeric_limits<float>::epsilon()*std::fabs(x+y)*ulp )
     {
 
     out=true;
     return true;
     }
-    return false;*/
-///
+
+    return false;
+
 }
 
 

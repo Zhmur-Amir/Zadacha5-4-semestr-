@@ -125,7 +125,7 @@ void painter8000(const CVect& cam,const CVect& nor, const CVect& ron,const float
     vpr=vpr.norm();
     norm=norm.norm();
     mron=mron.norm();
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for (int j=0; j<height;j++)
         {
             for(int i=0; i<width; i++)
