@@ -21,6 +21,7 @@ public:
     CVect operator+(const CVect&b)const;
     CVect operator-(const CVect&b)const;
     float operator*(const CVect&b)const;
+    CVect operator^(const CVect&b)const;
     void CopyOnly(const float a,const float b,const float c);
     CVect(const float a,const float b,const float c){SetZero(); CopyOnly(a,b,c);};
     CVect operator*(const float b)const;

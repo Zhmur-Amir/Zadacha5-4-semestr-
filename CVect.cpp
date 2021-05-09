@@ -98,3 +98,18 @@ CVect CVect :: norm()const
     CVect c(crr);
     return c;
 }
+
+CVect CVect::operator^(const CVect&b)const
+{
+    float* crr=new float[3];
+    crr[0]=arr[1]*b[2]-arr[2]*b[1];
+    crr[1]=arr[2]*b[0]-arr[0]*b[2];
+    crr[2]=arr[0]*b[1]-arr[1]*b[0];
+    CVect c(crr);
+    return c;
+}
+
+
+
+
+

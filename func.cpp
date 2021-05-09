@@ -2,6 +2,8 @@
 #include "Light.h"
 
 
+
+
 CVect reflect(const CVect &a, const CVect &b)
 {
     return (a-(b*2*(a*b)));
@@ -43,7 +45,7 @@ bool full_intersect(const CVect& orig, const CVect& dir, float a0, float a1, con
             {
                 min_dist=dist;
                 pnt=orig+dir*dist;
-                N=(pnt-((*it)->centr1()));
+                N=((*it)->normal(pnt));
                 N=N.norm();
                 color=((*it)->colour1());
                 bles=((*it)->blesk1());
@@ -54,7 +56,7 @@ bool full_intersect(const CVect& orig, const CVect& dir, float a0, float a1, con
                 {
                     min_dist=dist;
                     pnt=orig+dir*dist;
-                    N=(pnt-((*it)->centr1()))*(-1);
+                    N=N=((*it)->normal(pnt))*(-1);
                     N=N.norm();
                     CVect grey(128,128,128);
                     color=grey;
@@ -93,8 +95,8 @@ CVect ray(const CVect& orig, const CVect& dir, vector<CObject*> &objs ,float a0,
             float lg_dist;
             lg_dist=(((*it).cord1())-pnt).len();
             CVect shad_orig, shad_pt, shad_N,shad_color,shad_bles;
-            shad_orig=(lg_dir*N<0 ? pnt-N*1e-3 : pnt+ N*1e-3);
-            if(full_intersect(shad_orig,lg_dir,a0,a1,norm,objs,shad_pt,shad_N,shad_color,shad_bles) && (shad_pt-shad_orig).len()<lg_dist)
+            shad_orig=(lg_dir*N<0 ? pnt+N*1e-3 : pnt- N*1e-3);
+            if(full_intersect(shad_orig,lg_dir,a0,a1,lg_dir,objs,shad_pt,shad_N,shad_color,shad_bles) &&(shad_pt-shad_orig).len()<lg_dist)
             {
                 continue;
             }
@@ -105,27 +107,7 @@ CVect ray(const CVect& orig, const CVect& dir, vector<CObject*> &objs ,float a0,
         }
         return (color*lght*bles[0]*0.25+s*zerk*bles[1]*100);
     }
-    /*if(inter==true && out==false)
-        {
-            CVect v(128,128,128);
-            return v;
-        }
-        else
-        {
-            if(inter==true && out==true)
-            {
-                CVect v(250,0,0);
-                return v;
-            }
-            else
-            {
-                if(inter==false)
-                {
-                    CVect v(0,0,0);
-                    return v;
-                }
-            }
-        }*/
+
 
 }
 
@@ -143,7 +125,7 @@ void painter8000(const CVect& cam,const CVect& nor, const CVect& ron,const float
     vpr=vpr.norm();
     norm=norm.norm();
     mron=mron.norm();
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int j=0; j<height;j++)
         {
             for(int i=0; i<width; i++)
@@ -152,11 +134,6 @@ void painter8000(const CVect& cam,const CVect& nor, const CVect& ron,const float
                     x=mron[0]*pixel*(i+0.5-width/2)+vpr[0]*pixel*(-1)*(j+0.5-height/2)+a0*norm[0];
                     y=mron[1]*pixel*(i+0.5-width/2)+vpr[1]*pixel*(-1)*(j-height/2)+a0*norm[1];
                     z=mron[2]*pixel*(i+0.5-width/2)+vpr[2]*pixel*(-1)*(j+0.5-height/2)+a0*norm[2];
-
-
-
-                    //x =  (2*(i + 0.5)/width  - 1)*tan(alpha/2)*width/height*a0;
-                    //y = -(2*(j + 0.5)/height - 1)*tan(alpha/2)*a0;
 
 
                     CVect orig(cam),dir(x,y,z),res;

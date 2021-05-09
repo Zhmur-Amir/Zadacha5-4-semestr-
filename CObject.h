@@ -15,11 +15,37 @@ public:
     CVect colour1()const{return colour;}
     CVect blesk1()const{return blesk;}
     virtual CVect centr1()const=0;
+    virtual CVect normal(const CVect&b)const=0;
     virtual bool intersect(const CVect& orig, const CVect& dir,float &dist, bool &out,float a0, float a1, const CVect& norm)const=0;
     friend CVect ray(const CVect& orig, const CVect& dir,vector<CObject*> &objs, float a0, float a1, const CVect& norm);
 
 };
 
+
+
+class CPlane : public CObject
+{
+protected:
+    float* arr;
+    CVect* crr;
+public:
+    CPlane(){SetZero();}
+    ~CPlane(){Clean();}
+    CPlane(const CPlane &b){SetZero(); CopyOnly(b);}
+    void SetZero(){arr=NULL;crr=NULL;}
+    void Clean(){delete[] arr; delete[] crr; SetZero();}
+    CPlane &operator=(const CPlane&b){if(this!=&b){Clean(); CopyOnly(b);} return *this;}
+    CPlane(const CVect a,const CVect b,const CVect c){SetZero(); CopyOnly(a,b,c);};
+    CPlane(const float a,const float b,const  float c, const float d,const CVect&a1,const CVect&b1,const CVect&c1){SetZero(); CopyOnly(a,b,c,d,a1,b1,c1);};
+    void CopyOnly(const CVect m,const CVect n,const CVect c);
+    void CopyOnly(const float a,const float b,const float c, const float d,const CVect&a1,const CVect&b1,const CVect&c1);
+    void CopyOnly(const CPlane &b);
+    float &operator[](int i)const{if(i<0 || i>=4) throw -1; return arr[i];}
+    //void add_point4(const CVect&a);
+    CVect normal(const CVect&b)const{CVect f(arr[0],arr[1],arr[3]); f=f.norm(); return f;}
+    bool intersect(const CVect& orig, const CVect& dir,float &dist, bool &out,float a0, float a1, const CVect& norm)const;
+    CVect centr1()const{return ((crr[0]+crr[1]+crr[2])*0.3);}
+};
 
 
 class CSphere : public CObject
@@ -42,7 +68,7 @@ class CSphere : public CObject
     CVect centr1()const{return centr;}
     float rad1()const{return rad;}
     bool intersect(const CVect& orig, const CVect& dir, float &dist, bool &out,float a0, float a1, const CVect& norm)const;
-
+    CVect normal(const CVect&b)const{return (b-centr);}
 };
 
 
