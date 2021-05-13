@@ -10,7 +10,7 @@ bool CPlane :: intersect(const CVect& orig, const CVect& dir,float &dist, bool &
     vect=v*dir;
     constexpr int ulp=1;
 
-    constexpr float eps=3.5;
+    constexpr float eps=1;
 
 
     if(std::fabs(vect)<=eps)
