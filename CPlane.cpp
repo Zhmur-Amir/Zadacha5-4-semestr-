@@ -93,7 +93,7 @@ bool CPlane :: intersect(const CVect& orig, const CVect& dir,float &dist, bool &
 
 
 
-void CPlane :: CopyOnly(const CVect m,const CVect n,const CVect c)
+void CPlane :: CopyOnly(const CVect m,const CVect n,const CVect c,const CVect d)
 {
     CVect a=m-c, b=n-c;
     arr=new float[4];
@@ -105,8 +105,9 @@ void CPlane :: CopyOnly(const CVect m,const CVect n,const CVect c)
     crr[0]=m;
     crr[1]=n;
     crr[2]=c;
+    in=d;
 }
-void CPlane :: CopyOnly(const float a,const float b,const float c,const float d,const CVect&a1,const CVect&b1,const CVect&c1)
+void CPlane :: CopyOnly(const float a,const float b,const float c,const float d,const CVect&a1,const CVect&b1,const CVect&c1,const CVect& d1)
 {
    if(a1[0]*a+a1[1]*b+a1[2]*c+d!=0 && b1[0]*a+b1[1]*b+b1[2]*c+d!=0 && c1[0]*a+c1[1]*b+c1[2]*c+d!=0)
     {
@@ -121,6 +122,7 @@ void CPlane :: CopyOnly(const float a,const float b,const float c,const float d,
     crr[0]=a1;
     crr[1]=b1;
     crr[2]=c1;
+    in=d1;
 }
 void CPlane :: CopyOnly(const CPlane &b)
 {
@@ -130,6 +132,7 @@ void CPlane :: CopyOnly(const CPlane &b)
     {
         arr[i]=b.arr[i];
         crr[i]=b.crr[i];
+        in=b.in;
     }
 }
 

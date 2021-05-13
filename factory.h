@@ -65,11 +65,12 @@ public:
         Stream>>x5;
         Stream>>y5;
         Stream>>z5;
-        CVect metal(a,b,c),q(x1,y1,z1),w(x2,y2,z2),e(x3,y3,z3),r(x4,y4,z4),t(x5,y5,z5);
-        CObject* Pln1=new CPlane(q,w,e);
-        CObject* Pln2=new CPlane(q,e,r);
-        CObject* Pln3=new CPlane(q,r,w);
-        CObject* Pln4=new CPlane(w,e,r);
+        CVect metal(a,b,c),q(x1,y1,z1),w(x2,y2,z2),e(x3,y3,z3),r(x4,y4,z4),t(x5,y5,z5),n1((x1-x2)/2,(y1-y2)/2,(z1-z2)/2),n2((x3-x4)/2,(y3-y4)/2,(z3-z4)/2),m;
+        m=(n1-n2)*(1/2);
+        CObject* Pln1=new CPlane(q,w,e,m);
+        CObject* Pln2=new CPlane(q,e,r,m);
+        CObject* Pln3=new CPlane(q,r,w,m);
+        CObject* Pln4=new CPlane(w,e,r,m);
         Pln1->glyanetz(metal);
         Pln2->glyanetz(metal);
         Pln3->glyanetz(metal);
@@ -105,12 +106,12 @@ public:
         Stream>>z2;
         CVect metal(a,b,c),
         q1(x1,y1,z1),q2(x2,y1,z1),q3(x1,y1,z2),q4(x2,y1,z2),
-        w1(x2,y2,z2), w2(x1,y2,z2), w3(x2,y2,z1), w4(x1,y2,z1);
+        w1(x2,y2,z2), w2(x1,y2,z2), w3(x2,y2,z1), w4(x1,y2,z1), n((x1-x2)/2,(y1-y2)/2,(z1-z2)/2);
 
-        CObject* Pln1=new CPlane(q1,q2,q4);
-        CObject* Pln2=new CPlane(q1,q3,q4);
-        CObject* Pln3=new CPlane(w1,w2,w4);
-        CObject* Pln4=new CPlane(w1,w3,w4);
+        CObject* Pln1=new CPlane(q1,q2,q4,n);
+        CObject* Pln2=new CPlane(q1,q3,q4,n);
+        CObject* Pln3=new CPlane(w1,w2,w4,n);
+        CObject* Pln4=new CPlane(w1,w3,w4,n);
         Pln1->glyanetz(metal);
         Pln2->glyanetz(metal);
         Pln3->glyanetz(metal);
@@ -121,10 +122,10 @@ public:
         Plns.push_back(Pln3);
         Plns.push_back(Pln4);
 
-        CObject* Pln11=new CPlane(q1,w2,w4);
-        CObject* Pln21=new CPlane(q1,q3,w2);
-        CObject* Pln31=new CPlane(w1,q2,q4);
-        CObject* Pln41=new CPlane(w1,w3,q2);
+        CObject* Pln11=new CPlane(q1,w2,w4,n);
+        CObject* Pln21=new CPlane(q1,q3,w2,n);
+        CObject* Pln31=new CPlane(w1,q2,q4,n);
+        CObject* Pln41=new CPlane(w1,w3,q2,n);
         Pln11->glyanetz(metal);
         Pln21->glyanetz(metal);
         Pln31->glyanetz(metal);
@@ -135,10 +136,10 @@ public:
         Plns.push_back(Pln31);
         Plns.push_back(Pln41);
 
-        CObject* Pln12=new CPlane(w2,q3,q4);
-        CObject* Pln22=new CPlane(w2,w1,q4);
-        CObject* Pln32=new CPlane(q2,w3,w4);
-        CObject* Pln42=new CPlane(q2,q1,w4);
+        CObject* Pln12=new CPlane(w2,q3,q4,n);
+        CObject* Pln22=new CPlane(w2,w1,q4,n);
+        CObject* Pln32=new CPlane(q2,w3,w4,n);
+        CObject* Pln42=new CPlane(q2,q1,w4,n);
         Pln12->glyanetz(metal);
         Pln22->glyanetz(metal);
         Pln32->glyanetz(metal);
