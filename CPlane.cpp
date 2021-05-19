@@ -8,17 +8,21 @@ bool CPlane :: intersect(const CVect& orig, const CVect& dir,float &dist, bool &
     CVect v=normal(orig);
     float vect,t,z0,x0,y0,x,y,z;
     vect=v*dir;
-    constexpr int ulp=1;
+    constexpr int ulp=4;
+    constexpr float eps=1e-7;
+    //constexpr float eps=1;
 
-    constexpr float eps=1;
 
-
-    if(std::fabs(vect)<=eps)
+    /*if(std::fabs(vect)<=eps)
     {
         false;
-    }
+    }*/
     t=((arr[0]*orig[0]+arr[1]*orig[1]+arr[2]*orig[2]+arr[3])/(arr[0]*dir[0]+arr[1]*dir[1]+arr[2]*dir[2]));
-    if(std::fabs(t)<=eps)
+    /*if(std::fabs(t)<=eps)
+    {
+        return false;
+    }*/
+    if(t>-1e-2)
     {
         return false;
     }
@@ -26,7 +30,7 @@ bool CPlane :: intersect(const CVect& orig, const CVect& dir,float &dist, bool &
     y0=orig[1]-t*dir[1];
     z0=orig[2]-t*dir[2];
     CVect w(x0,y0,z0);
-    dist=w.len();
+    dist=-t;
     if (w*norm<a0 ||w*norm>a1)
     {
         return false;

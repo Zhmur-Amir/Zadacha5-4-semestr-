@@ -17,6 +17,7 @@ CVect CVect :: operator+(const CVect&b)const
         crr[i]=arr[i]+b.arr[i];
     }
     CVect c(crr);
+    delete[] crr;
     return c;
 }
 CVect CVect :: operator-(const CVect&b)const
@@ -27,6 +28,7 @@ CVect CVect :: operator-(const CVect&b)const
         crr[i]=arr[i]-b.arr[i];
     }
     CVect c(crr);
+    delete[] crr;
     return c;
 }
 float CVect :: operator*(const CVect&b)const
@@ -38,6 +40,7 @@ float CVect :: operator*(const CVect&b)const
         res[i]=arr[i]*b.arr[i];
     }
     ser=res[0]+res[1]+res[2];
+    delete[] res;
     return ser;
 }
 
@@ -84,6 +87,7 @@ CVect CVect :: operator*(const float b)const
         crr[i]=arr[i]*b;
     }
     CVect c(crr);
+    delete[] crr;
     return c ;
 }
 CVect CVect :: norm()const
@@ -96,6 +100,7 @@ CVect CVect :: norm()const
         crr[i]=arr[i]/b;
     }
     CVect c(crr);
+    delete[] crr;
     return c;
 }
 
@@ -106,6 +111,7 @@ CVect CVect::operator^(const CVect&b)const
     crr[1]=arr[2]*b[0]-arr[0]*b[2];
     crr[2]=arr[0]*b[1]-arr[1]*b[0];
     CVect c(crr);
+    delete[] crr;
     return c;
 }
 
